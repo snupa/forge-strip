@@ -1,1 +1,1 @@
-module.exports = require('./src/forge.min.js')({});
+module.exports = require('./src/forge.js')({});
