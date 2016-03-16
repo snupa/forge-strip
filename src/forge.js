@@ -147,7 +147,7 @@ function initForge() {
       return name;
     }
 
-    function makeRequire(relName, forceSync) {
+    function make__require(relName, forceSync) {
       return function () {
         //A version of a require function that passes a moduleName
         //value for items that may need to
@@ -246,7 +246,7 @@ function initForge() {
 
     handlers = {
       require: function (name) {
-        return makeRequire(name);
+        return make__require(name);
       },
       exports: function (name) {
         var e = defined[name];
@@ -287,7 +287,7 @@ function initForge() {
 
           //Fast path CommonJS standard dependencies.
           if (depName === "require") {
-            args[i] = handlers.require(name);
+            args[i] = handlers.__require(name);
           } else if (depName === "exports") {
             //CommonJS module spec 1.1
             args[i] = handlers.exports(name);
@@ -300,7 +300,7 @@ function initForge() {
             hasProp(defining, depName)) {
             args[i] = callDep(depName);
           } else if (map.p) {
-            map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
+            map.p.load(map.n, make__require(relName, true), makeLoad(depName), {});
             args[i] = defined[depName];
           } else {
             throw new Error(name + ' missing ' + depName);
@@ -328,7 +328,7 @@ function initForge() {
       }
     };
 
-    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
+    requirejs = __require = req = function (deps, callback, relName, forceSync, alt) {
       if (typeof deps === "string") {
         if (handlers[deps]) {
           //callback in this case is really relName
@@ -360,7 +360,7 @@ function initForge() {
         }
       }
 
-      //Support require(['a'])
+      //Support __require(['a'])
       callback = callback || function () {};
 
       //If relName is a function, it is an errback handler,
@@ -377,7 +377,7 @@ function initForge() {
         //Using a non-zero value because of concern for what old browsers
         //do, and latest browsers "upgrade" to 4 if lower value is used:
         //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
-        //If want a value immediately, use require('id') instead -- something
+        //If want a value immediately, use __require('id') instead -- something
         //that works in almond on the global level, but not guaranteed and
         //unlikely to work in other AMD implementations.
         setTimeout(function () {
@@ -3382,7 +3382,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -3669,7 +3669,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -4719,7 +4719,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -5866,7 +5866,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -6137,7 +6137,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7295,7 +7295,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7618,7 +7618,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7961,7 +7961,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -8314,7 +8314,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -8905,7 +8905,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -8980,7 +8980,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9182,7 +9182,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9468,7 +9468,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9762,7 +9762,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -10218,7 +10218,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -10457,7 +10457,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -11790,7 +11790,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -12120,7 +12120,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -12457,7 +12457,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -14163,7 +14163,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -17495,7 +17495,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -18629,7 +18629,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -18791,7 +18791,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -20325,7 +20325,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -20389,7 +20389,7 @@ function initForge() {
     var defineFunc = function(require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return require(dep);
+          return __require(dep);
         });
         // handle circular dependencies
         forge = forge || {};
@@ -20453,7 +20453,7 @@ function initForge() {
   })();
 
 
-  return require('js/forge');
+  return __require('js/forge');
 
 };
 module.exports = initForge;
