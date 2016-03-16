@@ -9547,9 +9547,7 @@ function initForge() {
       var _nodejs = (
       typeof process !== 'undefined' && process.versions && process.versions.node);
       var crypto;
-      if(_nodejs && !forge.disableNativeCode) {
-        crypto = require('crypto');
-      }
+    
 
       /**
        * Derives a key from a password.
@@ -9812,9 +9810,7 @@ function initForge() {
       var _nodejs = (
       typeof process !== 'undefined' && process.versions && process.versions.node);
       var _crypto = null;
-      if(!forge.disableNativeCode && _nodejs && !process.versions['node-webkit']) {
-        _crypto = require('crypto');
-      }
+      
 
       /* PRNG API */
       var prng = forge.prng = forge.prng || {};
