@@ -245,7 +245,7 @@ function initForge() {
     }
 
     handlers = {
-      require: function (name) {
+      __require: function (name) {
         return make__require(name);
       },
       exports: function (name) {
