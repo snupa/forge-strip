@@ -10,7 +10,7 @@ function initForge() {
   /*jslint sloppy: true */
   /*global setTimeout: false */
 
-  var requirejs, require, define;
+  var requirejs, __require, define;
   (function (undef) {
     var main, req, makeMap, handlers,
       defined = {},
@@ -280,13 +280,13 @@ function initForge() {
         //Pull out the defined dependencies and pass the ordered
         //values to the callback.
         //Default to [require, exports, module] if no deps
-        deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
+        deps = !deps.length && callback.length ? ['__require', 'exports', 'module'] : deps;
         for (i = 0; i < deps.length; i += 1) {
           map = makeMap(deps[i], relName);
           depName = map.f;
 
           //Fast path CommonJS standard dependencies.
-          if (depName === "require") {
+          if (depName === "__require") {
             args[i] = handlers.__require(name);
           } else if (depName === "exports") {
             //CommonJS module spec 1.1
@@ -3407,7 +3407,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/util',['require', 'module'], function() {
+    define('js/util',['__require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -3694,7 +3694,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/cipher',['require', 'module', './util'], function() {
+    define('js/cipher',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -4744,7 +4744,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/cipherModes',['require', 'module', './util'], function() {
+    define('js/cipherModes',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -5892,7 +5892,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define(
-      'js/aes',['require', 'module', './cipher', './cipherModes', './util'], function() {
+      'js/aes',['__require', 'module', './cipher', './cipherModes', './util'], function() {
         defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
       });
   })();
@@ -6162,7 +6162,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/oids',['require', 'module'], function() {
+    define('js/oids',['__require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7320,7 +7320,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/asn1',['require', 'module', './util', './oids'], function() {
+    define('js/asn1',['__require', 'module', './util', './oids'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7643,7 +7643,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/md5',['require', 'module', './util'], function() {
+    define('js/md5',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7986,7 +7986,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha1',['require', 'module', './util'], function() {
+    define('js/sha1',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -8339,7 +8339,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha256',['require', 'module', './util'], function() {
+    define('js/sha256',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -8930,7 +8930,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha512',['require', 'module', './util'], function() {
+    define('js/sha512',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9006,7 +9006,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define(
-      'js/md',['require', 'module', './md5', './sha1', './sha256', './sha512'], function() {
+      'js/md',['__require', 'module', './md5', './sha1', './sha256', './sha512'], function() {
         defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
       });
   })();
@@ -9207,7 +9207,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/hmac',['require', 'module', './md', './util'], function() {
+    define('js/hmac',['__require', 'module', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9493,7 +9493,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pem',['require', 'module', './util'], function() {
+    define('js/pem',['__require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9787,7 +9787,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pbkdf2',['require', 'module', './hmac', './md', './util'], function() {
+    define('js/pbkdf2',['__require', 'module', './hmac', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -10243,7 +10243,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/prng',['require', 'module', './md', './util'], function() {
+    define('js/prng',['__require', 'module', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
 
@@ -10482,7 +10482,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/random',['require', 'module', './aes', './md', './prng', './util'], function() {
+    define('js/random',['__require', 'module', './aes', './md', './prng', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -11815,7 +11815,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/jsbn',['require', 'module'], function() {
+    define('js/jsbn',['__require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -12145,7 +12145,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pkcs1',['require', 'module', './util', './random', './sha1'], function() {
+    define('js/pkcs1',['__require', 'module', './util', './random', './sha1'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -12482,7 +12482,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/prime',['require', 'module', './util', './jsbn', './random'], function() {
+    define('js/prime',['__require', 'module', './util', './jsbn', './random'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
 
@@ -14189,7 +14189,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/rsa',[
-      'require',
+      '__require',
       'module',
       './asn1',
       './jsbn',
@@ -17521,7 +17521,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/x509',[
-      'require',
+      '__require',
       'module',
       './aes',
       './asn1',
@@ -18655,7 +18655,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pkcs12',[
-      'require',
+      '__require',
       'module',
       './asn1',
       './hmac',
@@ -18817,7 +18817,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pki',[
-      'require',
+      '__require',
       'module',
       './asn1',
       './oids',
@@ -20351,7 +20351,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pkcs7',[
-      'require',
+      '__require',
       'module',
       './aes',
       './asn1',
@@ -20418,7 +20418,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/forge',[
-      'require',
+      '__require',
       'module',
       //'./aes',
       //'./aesCipherSuites',
