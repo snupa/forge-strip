@@ -10,7 +10,7 @@ function initForge() {
   /*jslint sloppy: true */
   /*global setTimeout: false */
 
-  var requirejs, __require, define;
+  var requirejs, Require, define;
   (function (undef) {
     var main, req, makeMap, handlers,
       defined = {},
@@ -43,7 +43,7 @@ function initForge() {
       //Adjust any relative paths.
       if (name && name.charAt(0) === ".") {
         //If have a base name, try to normalize against it,
-        //otherwise, assume it is a top-level require that will
+        //otherwise, assume it is a top-level Require that will
         //be relative to baseUrl in the end.
         if (baseName) {
           //Convert baseName to array, and lop off the last part,
@@ -147,9 +147,9 @@ function initForge() {
       return name;
     }
 
-    function make__require(relName, forceSync) {
+    function makeRequire(relName, forceSync) {
       return function () {
-        //A version of a require function that passes a moduleName
+        //A version of a Require function that passes a moduleName
         //value for items that may need to
         //look up paths relative to the moduleName
         return req.apply(undef, aps.call(arguments, 0).concat([relName, forceSync]));
@@ -245,8 +245,8 @@ function initForge() {
     }
 
     handlers = {
-      __require: function (name) {
-        return make__require(name);
+      Require: function (name) {
+        return makeRequire(name);
       },
       exports: function (name) {
         var e = defined[name];
@@ -279,15 +279,15 @@ function initForge() {
       if (callbackType === 'undefined' || callbackType === 'function') {
         //Pull out the defined dependencies and pass the ordered
         //values to the callback.
-        //Default to [require, exports, module] if no deps
-        deps = !deps.length && callback.length ? ['__require', 'exports', 'module'] : deps;
+        //Default to [Require, exports, module] if no deps
+        deps = !deps.length && callback.length ? ['Require', 'exports', 'module'] : deps;
         for (i = 0; i < deps.length; i += 1) {
           map = makeMap(deps[i], relName);
           depName = map.f;
 
           //Fast path CommonJS standard dependencies.
-          if (depName === "__require") {
-            args[i] = handlers.__require(name);
+          if (depName === "Require") {
+            args[i] = handlers.Require(name);
           } else if (depName === "exports") {
             //CommonJS module spec 1.1
             args[i] = handlers.exports(name);
@@ -300,7 +300,7 @@ function initForge() {
             hasProp(defining, depName)) {
             args[i] = callDep(depName);
           } else if (map.p) {
-            map.p.load(map.n, make__require(relName, true), makeLoad(depName), {});
+            map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
             args[i] = defined[depName];
           } else {
             throw new Error(name + ' missing ' + depName);
@@ -328,7 +328,7 @@ function initForge() {
       }
     };
 
-    requirejs = __require = req = function (deps, callback, relName, forceSync, alt) {
+    requirejs = Require = req = function (deps, callback, relName, forceSync, alt) {
       if (typeof deps === "string") {
         if (handlers[deps]) {
           //callback in this case is really relName
@@ -360,7 +360,7 @@ function initForge() {
         }
       }
 
-      //Support __require(['a'])
+      //Support Require(['a'])
       callback = callback || function () {};
 
       //If relName is a function, it is an errback handler,
@@ -377,7 +377,7 @@ function initForge() {
         //Using a non-zero value because of concern for what old browsers
         //do, and latest browsers "upgrade" to 4 if lower value is used:
         //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
-        //If want a value immediately, use __require('id') instead -- something
+        //If want a value immediately, use Require('id') instead -- something
         //that works in almond on the global level, but not guaranteed and
         //unlikely to work in other AMD implementations.
         setTimeout(function () {
@@ -3367,7 +3367,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -3379,10 +3379,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -3407,7 +3407,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/util',['__require', 'module'], function() {
+    define('js/util',['Require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -3654,7 +3654,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -3666,10 +3666,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -3694,7 +3694,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/cipher',['__require', 'module', './util'], function() {
+    define('js/cipher',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -4704,7 +4704,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -4716,10 +4716,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -4744,7 +4744,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/cipherModes',['__require', 'module', './util'], function() {
+    define('js/cipherModes',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -5031,7 +5031,7 @@ function initForge() {
        * Performs initialization, ie: precomputes tables to optimize for speed.
        *
        * One way to understand how AES works is to imagine that 'addition' and
-       * 'multiplication' are interfaces that require certain mathematical
+       * 'multiplication' are interfaces that Require certain mathematical
        * properties to hold true (ie: they are associative) but they might have
        * different implementations and produce different kinds of results ...
        * provided that their mathematical properties remain true. AES defines
@@ -5851,7 +5851,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -5863,10 +5863,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -5892,7 +5892,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define(
-      'js/aes',['__require', 'module', './cipher', './cipherModes', './util'], function() {
+      'js/aes',['Require', 'module', './cipher', './cipherModes', './util'], function() {
         defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
       });
   })();
@@ -6122,7 +6122,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -6134,10 +6134,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -6162,7 +6162,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/oids',['__require', 'module'], function() {
+    define('js/oids',['Require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7280,7 +7280,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -7292,10 +7292,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7320,7 +7320,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/asn1',['__require', 'module', './util', './oids'], function() {
+    define('js/asn1',['Require', 'module', './util', './oids'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7603,7 +7603,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -7615,10 +7615,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7643,7 +7643,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/md5',['__require', 'module', './util'], function() {
+    define('js/md5',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -7946,7 +7946,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -7958,10 +7958,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -7986,7 +7986,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha1',['__require', 'module', './util'], function() {
+    define('js/sha1',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -8299,7 +8299,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -8311,10 +8311,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -8339,7 +8339,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha256',['__require', 'module', './util'], function() {
+    define('js/sha256',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -8890,7 +8890,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -8902,10 +8902,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -8930,7 +8930,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/sha512',['__require', 'module', './util'], function() {
+    define('js/sha512',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -8965,7 +8965,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -8977,10 +8977,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9006,7 +9006,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define(
-      'js/md',['__require', 'module', './md5', './sha1', './sha256', './sha512'], function() {
+      'js/md',['Require', 'module', './md5', './sha1', './sha256', './sha512'], function() {
         defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
       });
   })();
@@ -9167,7 +9167,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -9179,10 +9179,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9207,7 +9207,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/hmac',['__require', 'module', './md', './util'], function() {
+    define('js/hmac',['Require', 'module', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9453,7 +9453,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -9465,10 +9465,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9493,7 +9493,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pem',['__require', 'module', './util'], function() {
+    define('js/pem',['Require', 'module', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9547,7 +9547,7 @@ function initForge() {
       var _nodejs = (
       typeof process !== 'undefined' && process.versions && process.versions.node);
       var crypto;
-    
+
 
       /**
        * Derives a key from a password.
@@ -9747,7 +9747,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -9759,10 +9759,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -9787,7 +9787,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pbkdf2',['__require', 'module', './hmac', './md', './util'], function() {
+    define('js/pbkdf2',['Require', 'module', './hmac', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -9810,7 +9810,7 @@ function initForge() {
       var _nodejs = (
       typeof process !== 'undefined' && process.versions && process.versions.node);
       var _crypto = null;
-      
+
 
       /* PRNG API */
       var prng = forge.prng = forge.prng || {};
@@ -10203,7 +10203,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -10215,10 +10215,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -10243,7 +10243,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/prng',['__require', 'module', './md', './util'], function() {
+    define('js/prng',['Require', 'module', './md', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
 
@@ -10442,7 +10442,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -10454,10 +10454,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -10482,7 +10482,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/random',['__require', 'module', './aes', './md', './prng', './util'], function() {
+    define('js/random',['Require', 'module', './aes', './md', './prng', './util'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -11775,7 +11775,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -11787,10 +11787,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -11815,7 +11815,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/jsbn',['__require', 'module'], function() {
+    define('js/jsbn',['Require', 'module'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -12105,7 +12105,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -12117,10 +12117,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -12145,7 +12145,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/pkcs1',['__require', 'module', './util', './random', './sha1'], function() {
+    define('js/pkcs1',['Require', 'module', './util', './random', './sha1'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
   })();
@@ -12317,7 +12317,7 @@ function initForge() {
         generate();
 
         function generate() {
-          // require at least 1 worker
+          // Require at least 1 worker
           numWorkers = Math.max(1, numWorkers);
 
           // TODO: consider optimizing by starting workers outside getPrime() ...
@@ -12442,7 +12442,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -12454,10 +12454,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -12482,7 +12482,7 @@ function initForge() {
       define = tmpDefine;
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
-    define('js/prime',['__require', 'module', './util', './jsbn', './random'], function() {
+    define('js/prime',['Require', 'module', './util', './jsbn', './random'], function() {
       defineFunc.apply(null, Array.prototype.slice.call(arguments, 0));
     });
 
@@ -14148,7 +14148,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -14160,10 +14160,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -14189,7 +14189,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/rsa',[
-      '__require',
+      'Require',
       'module',
       './asn1',
       './jsbn',
@@ -17480,7 +17480,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -17492,10 +17492,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -17521,7 +17521,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/x509',[
-      '__require',
+      'Require',
       'module',
       './aes',
       './asn1',
@@ -18614,7 +18614,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -18626,10 +18626,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -18655,7 +18655,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pkcs12',[
-      '__require',
+      'Require',
       'module',
       './asn1',
       './hmac',
@@ -18776,7 +18776,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -18788,10 +18788,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -18817,7 +18817,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pki',[
-      '__require',
+      'Require',
       'module',
       './asn1',
       './oids',
@@ -20310,7 +20310,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -20322,10 +20322,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         }).concat(initModule);
         // handle circular dependencies
         forge = forge || {};
@@ -20351,7 +20351,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/pkcs7',[
-      '__require',
+      'Require',
       'module',
       './aes',
       './asn1',
@@ -20373,7 +20373,7 @@ function initForge() {
       if(typeof module === 'object' && module.exports) {
         var nodeJS = true;
         define = function(ids, factory) {
-          factory(require, module);
+          factory(Require, module);
         };
       } else {
         // <script>
@@ -20386,10 +20386,10 @@ function initForge() {
     }
 // AMD
     var deps;
-    var defineFunc = function(require, module) {
+    var defineFunc = function(Require, module) {
       module.exports = function(forge) {
         var mods = deps.map(function(dep) {
-          return __require(dep);
+          return Require(dep);
         });
         // handle circular dependencies
         forge = forge || {};
@@ -20418,7 +20418,7 @@ function initForge() {
       return define.apply(null, Array.prototype.slice.call(arguments, 0));
     };
     define('js/forge',[
-      '__require',
+      'Require',
       'module',
       //'./aes',
       //'./aesCipherSuites',
@@ -20453,7 +20453,7 @@ function initForge() {
   })();
 
 
-  return __require('js/forge');
+  return Require('js/forge');
 
 };
 module.exports = initForge;
